@@ -21,6 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'phone',
+        'avatar',
+        'is_active',
     ];
 
     /**
@@ -41,5 +45,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_active' => 'boolean',
+
     ];
+
+    public function employerProfile(){
+        return $this->hasOne(EmployerProfile::class);
+    }
+    public function CandidateProfile(){
+        return $this->hasOne(CandidateProfile::class);
+    }
+    public function jobs(){
+        return $this->hasMany(Job::class);
+    }
+    public function applications(){
+        return $this->hasMany(Application::class);
+    }
+    public function IsAdmin(){
+        return $this->role === 'admin';
+    }
+    public function IsEmployer(){
+        return $this->role==='employer';
+    }
+    public function IsCandidate(){
+        return $this->role==='candidate';
+    }
 }
