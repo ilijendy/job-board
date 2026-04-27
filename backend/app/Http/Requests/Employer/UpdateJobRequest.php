@@ -19,13 +19,11 @@ class UpdateJobRequest extends FormRequest
             'description'      => 'sometimes|string',
             'responsibilities' => 'sometimes|string',
             'requirements'     => 'sometimes|string',
-            'benefits'         => 'nullable|string',
-            'salary_min'       => 'nullable|numeric|min:0',
-            'salary_max'       => 'nullable|numeric|min:0|gte:salary_min',
+            'salary'           => 'nullable|numeric|min:0',
             'location'         => 'sometimes|string',
-            'work_type'        => 'sometimes|in:remote,onsite,hybrid',
-            'experience_level' => 'sometimes|in:junior,mid,senior',
-            'deadline'         => 'nullable|date|after:today',
+            'type'             => 'sometimes|in:full-time,part-time,contract,internship',
+            'experience_level' => 'sometimes|in:entry,mid,senior',
+            'application_deadline' => 'nullable|date|after:today',
         ];
     }
 }

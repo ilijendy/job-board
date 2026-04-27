@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class job extends Model
+class Job extends Model
 {
     protected $fillable=[
         'employer_id',
@@ -13,9 +13,11 @@ class job extends Model
         'slug',
         'title',
         'description',
+        'requirements',
+        'responsibilities',
         'location',
         'salary',
-        'job_type',
+        'type',
         'experience_level',
         'application_deadline',
         'status',
@@ -34,7 +36,7 @@ class job extends Model
         $this->attributes['slug']=strtolower(str_replace(' ', '-', $value));
     }
     public function category(){
-        return $this->belongto(Category::class);
+        return $this->belongsTo(Category::class);
     }
     public function employer(){
         return $this->belongsTo(User::class, 'employer_id');

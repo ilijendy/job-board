@@ -29,7 +29,7 @@ class StoreJobRequest extends FormRequest
             'salary'=>'nullable|numeric',
             'type'=>'required|in:full-time,part-time,contract,internship',
             'responsibilities'=>'nullable|string',
-            'qualifications'=>'nullable|string',
+            'requirements'=>'nullable|string',
             'experience_level'=>'nullable|in:entry,mid,senior',
             'application_deadline'=>'nullable|date|after:today',
         ];
