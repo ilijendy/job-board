@@ -46,4 +46,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('applications', [CandidateController::class, 'myApplications']);
         Route::delete('application/{application}', [CandidateController::class, 'cancelApplication']);
     });
+    // admin
+    Route::prefix('admin')->group(function () {
+        Route::get('pending-jobs', [AdminController::class, 'pendingJobs']);
+        Route::put('job/{job}/approve', [AdminController::class, 'approveJob']);
+        Route::put('job/{job}/reject', [AdminController::class, 'rejectJob']);
+        Route::get('stats', [AdminController::class, 'stats']);
+    });
 });
