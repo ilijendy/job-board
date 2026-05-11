@@ -15,7 +15,7 @@ class CandidateProfile extends Model
         'bio',
         'location',
         'experience_years',
-        'resume',
+        'resume_url',
         'linkedin_url',
         'predefined_skills',
         'custom_skills',

@@ -18,7 +18,6 @@ return new class extends Migration
             $table->text('bio')->nullable();
             $table->string('location')->nullable();
             $table->integer('experience_years')->nullable();
-            $table->string('skills')->nullable();
             $table->string('resume_url')->nullable();
             $table->string("linkedin_url")->nullable();
             $table->json('predefined_skills')->nullable();
