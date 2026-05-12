@@ -33,11 +33,12 @@ export default function Register() {
 
         try {
             const res = await api.post('/auth/register', form);
-            const { user, token } = res.data;
+            const { user, access_token: token } = res.data;
             login(user, token);
 
             if (user.role === 'employer') navigate('/employer/dashboard');
-            else navigate('/candidate/dashboard');
+            else if (user.role === 'candidate') navigate('/candidate/dashboard');
+            else navigate('/');
         } catch (err) {
             setError(err.response?.data?.message || 'Something went wrong');
         } finally {

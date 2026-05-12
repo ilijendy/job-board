@@ -27,12 +27,13 @@ export default function Login() {
 
         try {
             const res = await api.post('/auth/login', form);
-            const { user, token } = res.data;
+            const { user, access_token: token } = res.data;
             login(user, token);
 
             if (user.role === 'employer') navigate('/employer/dashboard');
             else if (user.role === 'candidate') navigate('/candidate/dashboard');
             else if (user.role === 'admin') navigate('/admin/dashboard');
+            else navigate('/');
         } catch (err) {
             setError(err.response?.data?.message || 'Something went wrong');
         } finally {
