@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Candidate\ApplyJobRequest;
+use App\Http\Requests\Candidate\UpdateProfileRequest;
 use App\Http\Requests\Candidate\UploadResumeRequest;
+use App\Models\Application;
 use App\Models\Job;
-use Auth;
-use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 
-class candidate extends Controller
+class CandidateController extends Controller
 {
+    // Show candidate profile
     public function showProfile()
     {
         $profile = auth()->user()->candidateProfile;
@@ -19,6 +20,8 @@ class candidate extends Controller
             'profile' => $profile,
         ]);
     }
+
+    // Update candidate profile
     public function updateProfile(UpdateProfileRequest $request)
     {
         $user = auth()->user();
@@ -35,27 +38,24 @@ class candidate extends Controller
         ]);
     }
 
-    public function uploadeResume(UploadResumeRequest $request)
+    // Upload resume
+    public function uploadResume(UploadResumeRequest $request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
         $path = $request->file('resume')->store('resumes', 'public');
-        $profile = $user->CandidateProfile();
-        if ($profile) {
-            $profile->update(['resume' => $path]);
 
-        } else {
-            $user->candidateProfile()->create([
-                'user_id' => $user->id,
-                'resume' => $path,
-            ]);
-        }
+        $profile = $user->candidateProfile()->updateOrCreate(
+            ['user_id' => $user->id],
+            ['resume_url' => $path]
+        );
+
         return response()->json([
-            'message' => 'Resume uploaded successfully',
-            'resume_path' => $path,
+            'message'    => 'Resume uploaded successfully',
+            'resume_url' => $path,
         ]);
-
     }
 
+    // Apply to a job
     public function apply(ApplyJobRequest $request, Job $job)
     {
         if (!$job->isApproved()) {
@@ -73,18 +73,20 @@ class candidate extends Controller
         $resumePath = $request->file('resume')->store('resumes', 'public');
 
         $application = Application::create([
-            'job_id' => $job->id,
+            'job_id'       => $job->id,
             'candidate_id' => auth()->id(),
             'cover_letter' => $request->cover_letter,
-            'resume' => $resumePath,
-            'status' => 'pending',
+            'resume'       => $resumePath,
+            'status'       => 'pending',
         ]);
 
         return response()->json([
-            'message' => 'Application submitted successfully',
+            'message'     => 'Application submitted successfully',
             'application' => $application,
         ], 201);
     }
+
+    // List my applications
     public function myApplications()
     {
         $user = auth()->user();
@@ -99,15 +101,19 @@ class candidate extends Controller
         ]);
     }
 
-    public function cancelFunction(Application $application)
+    // Cancel an application
+    public function cancelApplication(Application $application)
     {
-        $user = Auth::user();
+        $user = auth()->user();
+
         if ($application->candidate_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-        if (!$application->isPending) {
+
+        if (!$application->isPending()) {
             return response()->json(['message' => 'Cannot cancel this application'], 422);
         }
+
         $application->update(['status' => 'cancelled']);
 
         return response()->json([

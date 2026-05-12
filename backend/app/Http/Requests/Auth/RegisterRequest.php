@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Symfony\Polyfill\Intl\Idn\Resources\unidata\Regex;
 
 class RegisterRequest extends FormRequest
 {

@@ -52,7 +52,7 @@ class User extends Authenticatable
     public function employerProfile(){
         return $this->hasOne(EmployerProfile::class);
     }
-    public function CandidateProfile(){
+    public function candidateProfile(){
         return $this->hasOne(CandidateProfile::class);
     }
     public function jobs(){
