@@ -3,22 +3,19 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 
-const navClass = ({ isActive }) =>
-    `text-sm font-medium transition-colors ${isActive ? 'text-brand-600' : 'text-slate-600 hover:text-brand-600'}`;
-
-function AvatarImg({ user, size = 9 }) {
+function AvatarImg({ user }) {
     const initials = (user?.name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
     if (user?.avatar) {
         return (
             <img
                 src={`http://127.0.0.1:8000/storage/${user.avatar}`}
                 alt={user.name}
-                className={`h-${size} w-${size} rounded-full object-cover border-2 border-brand-200`}
+                className="h-8 w-8 rounded-full object-cover ring-2 ring-blue-100"
             />
         );
     }
     return (
-        <span className={`flex h-${size} w-${size} items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-400 text-white text-xs font-bold`}>
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-white text-xs font-bold">
             {initials}
         </span>
     );
@@ -46,64 +43,85 @@ export default function SiteHeader() {
         navigate('/');
     };
 
+    const navLinkClass = ({ isActive }) =>
+        `text-sm font-medium transition-colors ${isActive ? 'text-brand-600' : 'text-slate-600 hover:text-slate-900'}`;
+
     return (
-        <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
-            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <header className="sticky top-0 z-40 bg-white border-b border-slate-100">
+            <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+
                 {/* Logo */}
-                <Link to="/" className="flex items-center gap-2 shrink-0">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-white text-sm font-bold shadow-sm">J</span>
-                    <span className="font-bold text-slate-900 tracking-tight hidden sm:inline">JobBoard</span>
+                <Link to="/" className="flex items-center gap-2.5 shrink-0">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600">
+                        <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 7h-4V5a3 3 0 00-3-3h-2a3 3 0 00-3 3v2H4a1 1 0 00-1 1v11a2 2 0 002 2h14a2 2 0 002-2V8a1 1 0 00-1-1zm-9-2a1 1 0 011-1h2a1 1 0 011 1v2h-4V5zm8 14H5V9h14v10z"/>
+                        </svg>
+                    </div>
+                    <span className="font-bold text-slate-900 text-base tracking-tight hidden sm:inline">JobBoard</span>
                 </Link>
 
-                {/* Desktop Nav */}
+                {/* Center nav */}
                 <nav className="hidden md:flex items-center gap-6">
-                    <NavLink to="/" end className={navClass}>Explore jobs</NavLink>
-                    {user?.role === 'employer' && (
-                        <>
-                            <NavLink to="/employer/dashboard" className={navClass}>My Jobs</NavLink>
-                            <NavLink to="/employer/post-job" className={navClass}>Post a Job</NavLink>
-                        </>
-                    )}
-                    {user?.role === 'candidate' && (
-                        <NavLink to="/candidate/dashboard" className={navClass}>My Applications</NavLink>
-                    )}
-                    {user?.role === 'admin' && (
-                        <NavLink to="/admin/dashboard" className={navClass}>Admin Panel</NavLink>
-                    )}
+                    <NavLink to="/" end className={navLinkClass}>Find Jobs</NavLink>
+                    {user?.role === 'employer' && <>
+                        <NavLink to="/employer/dashboard" className={navLinkClass}>My Jobs</NavLink>
+                        <NavLink to="/employer/job/0/applications" className={({ isActive }) => `text-sm font-medium text-slate-600 hover:text-slate-900`}>Applications</NavLink>
+                    </>}
+                    {user?.role === 'candidate' && <>
+                        <NavLink to="/candidate/dashboard" className={navLinkClass}>My Applications</NavLink>
+                    </>}
+                    {user?.role === 'admin' && <>
+                        <NavLink to="/admin/dashboard" className={navLinkClass}>Admin Panel</NavLink>
+                    </>}
                 </nav>
 
                 {/* Right side */}
-                <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex items-center gap-3">
                     {user ? (
                         <div className="flex items-center gap-2">
-                            {profilePath && (
-                                <Link to={profilePath} className="flex items-center gap-2 rounded-xl px-2 py-1 hover:bg-slate-50 transition-colors">
-                                    <AvatarImg user={user} size={8} />
-                                    <span className="hidden sm:inline text-sm font-medium text-slate-700">{user.name?.split(' ')[0]}</span>
+                            {/* Avatar & name */}
+                            {profilePath ? (
+                                <Link to={profilePath} className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-slate-50 transition-colors">
+                                    <AvatarImg user={user} />
+                                    <span className="hidden sm:inline text-sm font-medium text-slate-700 max-w-[120px] truncate">{user.name?.split(' ')[0]}</span>
+                                </Link>
+                            ) : (
+                                <Link to={dashPath} className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-slate-50">
+                                    <AvatarImg user={user} />
                                 </Link>
                             )}
+
+                            {/* Employer: Post a Job button */}
+                            {user?.role === 'employer' && (
+                                <Link to="/employer/post-job" className="hidden sm:inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors">
+                                    + Post a Job
+                                </Link>
+                            )}
+
                             <button
-                                type="button"
                                 onClick={handleLogout}
-                                className="text-sm font-medium text-slate-600 hover:text-brand-600 px-3 py-2 rounded-lg hover:bg-brand-50 transition-colors"
+                                className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors px-2 py-1.5 rounded-lg hover:bg-slate-50"
                             >
                                 Log out
                             </button>
                         </div>
                     ) : (
-                        <>
-                            <Link to="/login" className="text-sm font-semibold text-slate-700 hover:text-brand-600 px-3 py-2 rounded-lg transition-colors">
+                        <div className="flex items-center gap-2">
+                            <Link to="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 px-3 py-2 rounded-lg transition-colors">
                                 Log in
                             </Link>
-                            <Link to="/register" className="inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 transition-colors">
+                            <Link to="/register" className="inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors">
                                 Register
                             </Link>
-                        </>
+                            <Link to="/employer/post-job" className="hidden sm:inline-flex items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+                                Post a job
+                            </Link>
+                        </div>
                     )}
+
                     {/* Mobile hamburger */}
                     <button
-                        type="button"
-                        className="md:hidden rounded-lg p-2 text-slate-600 hover:bg-slate-100"
+                        className="md:hidden rounded-lg p-2 text-slate-600 hover:bg-slate-100 transition-colors"
                         onClick={() => setMenuOpen(!menuOpen)}
                         aria-label="Toggle menu"
                     >
@@ -118,24 +136,25 @@ export default function SiteHeader() {
 
             {/* Mobile menu */}
             {menuOpen && (
-                <div className="md:hidden border-t border-slate-100 bg-white px-4 py-3 space-y-1">
-                    <Link to="/" className="block py-2 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>Explore jobs</Link>
-                    {user?.role === 'employer' && (
-                        <>
-                            <Link to="/employer/dashboard" className="block py-2 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>My Jobs</Link>
-                            <Link to="/employer/post-job" className="block py-2 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>Post a Job</Link>
-                            <Link to="/employer/profile" className="block py-2 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>Company Profile</Link>
-                        </>
-                    )}
-                    {user?.role === 'candidate' && (
-                        <>
-                            <Link to="/candidate/dashboard" className="block py-2 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>My Applications</Link>
-                            <Link to="/candidate/profile" className="block py-2 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>My Profile</Link>
-                        </>
-                    )}
+                <div className="md:hidden border-t border-slate-100 bg-white px-4 py-3 space-y-1 shadow-lg">
+                    <Link to="/" className="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>Find Jobs</Link>
+                    {user?.role === 'employer' && <>
+                        <Link to="/employer/dashboard" className="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>My Jobs</Link>
+                        <Link to="/employer/post-job" className="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>Post a Job</Link>
+                        <Link to="/employer/profile" className="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>Company Profile</Link>
+                    </>}
+                    {user?.role === 'candidate' && <>
+                        <Link to="/candidate/dashboard" className="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>My Applications</Link>
+                        <Link to="/candidate/profile" className="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>My Profile</Link>
+                    </>}
                     {user?.role === 'admin' && (
-                        <Link to="/admin/dashboard" className="block py-2 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>Admin Panel</Link>
+                        <Link to="/admin/dashboard" className="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>Admin Panel</Link>
                     )}
+                    {!user && <>
+                        <Link to="/login" className="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>Log in</Link>
+                        <Link to="/register" className="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>Register</Link>
+                        <Link to="/employer/post-job" className="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-600" onClick={() => setMenuOpen(false)}>Post a job</Link>
+                    </>}
                 </div>
             )}
         </header>

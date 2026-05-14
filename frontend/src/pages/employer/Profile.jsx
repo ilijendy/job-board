@@ -126,7 +126,7 @@ export default function EmployerProfile() {
     const logoSrc = logoPreview || (profile?.company_logo ? `http://127.0.0.1:8000/storage/${profile.company_logo}` : null);
 
     return (
-        <div className="min-h-screen flex flex-col bg-slate-50">
+        <div className="min-h-screen flex flex-col bg-[#f8f9fc]">
             <SiteHeader />
             <main className="flex-1 mx-auto w-full max-w-4xl px-4 sm:px-6 py-10">
                 {/* Hero banner */}

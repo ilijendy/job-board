@@ -54,7 +54,7 @@ export default function EmployerDashboard() {
     const pending  = jobs.filter(j => j.status === 'open').length;
 
     return (
-        <div className="min-h-screen flex flex-col bg-slate-50">
+        <div className="min-h-screen flex flex-col bg-[#f8f9fc]">
             <SiteHeader />
             <main className="flex-1 mx-auto w-full max-w-6xl px-4 sm:px-6 py-10">
                 {/* Header */}
