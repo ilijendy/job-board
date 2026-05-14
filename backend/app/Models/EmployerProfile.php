@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EmployerProfile extends Model
 {
+    protected $table = 'employers_profiles';
+
     protected $fillable=[
         'user_id',
         'company_name',
