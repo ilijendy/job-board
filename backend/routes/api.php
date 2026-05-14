@@ -2,14 +2,17 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // public
 Route::get('jobs', [JobController::class, 'index']);
 Route::get('jobs/{job}', [JobController::class, 'show']);
+Route::get('categories', [CategoryController::class, 'index']);
 
 // auth
 Route::prefix('auth')->group(function () {
@@ -20,6 +23,11 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     // logout
     Route::post('/logout', [AuthController::class, 'Logout']);
+
+    // current user profile (all roles)
+    Route::get('/user', [UserController::class, 'show']);
+    Route::put('/user', [UserController::class, 'update']);
+    Route::post('/user/avatar', [UserController::class, 'uploadAvatar']);
 
     // employer
     Route::middleware('role:employer')->prefix('employer')->group(function () {
