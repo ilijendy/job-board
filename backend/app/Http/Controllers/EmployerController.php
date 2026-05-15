@@ -41,7 +41,7 @@ class EmployerController extends Controller
         ]);
     }
 
-    // عرض كل Jobs بتاعته
+    // عرض كل Jobs بتاعت
     public function myJobs()
     {
         $jobs = auth()->user()->jobs()->latest()->get();

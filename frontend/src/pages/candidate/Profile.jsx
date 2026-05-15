@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import SiteHeader from '../../components/layout/SiteHeader';
 import SiteFooter from '../../components/layout/SiteFooter';
@@ -29,10 +30,22 @@ function AvatarUploader({ user, onUpload }) {
         const fd = new FormData();
         fd.append('avatar', file);
         try {
-            const res = await api.post('/user/avatar', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+            // Use raw axios (not the api instance) so we don't inherit Content-Type: application/json.
+            // The browser will automatically set multipart/form-data with the correct boundary.
+            const token = localStorage.getItem('token');
+            const res = await axios.post('http://127.0.0.1:8000/api/user/avatar', fd, {
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             onUpload(res.data.user);
-        } catch {}
-        finally { setUploading(false); }
+        } catch (err) {
+            console.error('Avatar upload failed:', err.response?.data || err.message);
+            setPreview(null); // revert preview on failure
+        } finally {
+            setUploading(false);
+        }
     };
 
     return (
@@ -82,21 +95,26 @@ export default function CandidateProfile() {
     const resumeRef = useRef();
 
     useEffect(() => {
-        Promise.all([api.get('/user'), api.get('/candidate/profile')]).then(([uRes, pRes]) => {
-            const u = uRes.data.user;
-            setUserForm({ name: u.name || '', phone: u.phone || '' });
-            const p = pRes.data.profile || {};
-            setCurrentResume(p.resume_url);
-            setProfileForm({
-                headline: p.headline || '',
-                bio: p.bio || '',
-                location: p.location || '',
-                experience_years: p.experience_years || '',
-                linkedin_url: p.linkedin_url || '',
-                predefined_skills: p.predefined_skills || [],
-                custom_skills: p.custom_skills || [],
-            });
-        }).finally(() => setLoading(false));
+        Promise.all([api.get('/user'), api.get('/candidate/profile')])
+            .then(([uRes, pRes]) => {
+                const u = uRes.data.user;
+                setUserForm({ name: u.name || '', phone: u.phone || '' });
+                const p = pRes.data.profile || {};
+                setCurrentResume(p.resume_url || null);
+                setProfileForm({
+                    headline: p.headline || '',
+                    bio: p.bio || '',
+                    location: p.location || '',
+                    experience_years: p.experience_years || '',
+                    linkedin_url: p.linkedin_url || '',
+                    predefined_skills: Array.isArray(p.predefined_skills) ? p.predefined_skills : [],
+                    custom_skills: Array.isArray(p.custom_skills) ? p.custom_skills : [],
+                });
+            })
+            .catch(() => {
+                // Profile doesn't exist yet for this user — that's fine, start with defaults
+            })
+            .finally(() => setLoading(false));
     }, []);
 
     const toggleSkill = skill => {

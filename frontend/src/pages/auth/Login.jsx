@@ -13,6 +13,7 @@ export default function Login() {
 
     const [form, setForm] = useState({ email: '', password: '' });
     const [error, setError] = useState(null);
+    const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -24,6 +25,7 @@ export default function Login() {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setFieldErrors({});
 
         try {
             const res = await api.post('/auth/login', form);
@@ -35,7 +37,13 @@ export default function Login() {
             else if (user.role === 'admin') navigate('/admin/dashboard');
             else navigate('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Something went wrong');
+            const data = err.response?.data;
+            if (data?.errors) {
+                // Laravel field-level validation errors
+                setFieldErrors(data.errors);
+            } else {
+                setError(data?.message || 'Something went wrong. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -47,7 +55,24 @@ export default function Login() {
             subtitle="Log in to manage applications, post jobs, and pick up where you left off."
         >
             {error && (
-                <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
+                <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                    <svg className="mt-0.5 h-4 w-4 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /></svg>
+                    {error}
+                </div>
+            )}
+            {Object.keys(fieldErrors).length > 0 && (
+                <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                    <ul className="space-y-1">
+                        {Object.entries(fieldErrors).map(([field, messages]) =>
+                            messages.map((msg, i) => (
+                                <li key={`${field}-${i}`} className="flex items-start gap-2">
+                                    <svg className="mt-0.5 h-4 w-4 shrink-0 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-9a1 1 0 112 0v3a1 1 0 11-2 0V9zm1-4a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd" /></svg>
+                                    <span><span className="font-semibold capitalize">{field.replace('_', ' ')}</span>: {msg}</span>
+                                </li>
+                            ))
+                        )}
+                    </ul>
+                </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -60,11 +85,12 @@ export default function Login() {
                         name="email"
                         value={form.email}
                         onChange={handleChange}
-                        className={inputClass}
+                        className={`${inputClass} ${fieldErrors.email ? 'border-red-400 focus:border-red-400 focus:ring-red-500/20' : ''}`}
                         placeholder="you@example.com"
                         autoComplete="email"
                         required
                     />
+                    {fieldErrors.email && <p className="mt-1.5 text-xs text-red-600">{fieldErrors.email[0]}</p>}
                 </div>
 
                 <div>
@@ -77,7 +103,7 @@ export default function Login() {
                             name="password"
                             value={form.password}
                             onChange={handleChange}
-                            className={`${inputClass} pr-11`}
+                            className={`${inputClass} pr-11 ${fieldErrors.password ? 'border-red-400 focus:border-red-400 focus:ring-red-500/20' : ''}`}
                             placeholder="••••••••"
                             autoComplete="current-password"
                             required
@@ -100,6 +126,7 @@ export default function Login() {
                             )}
                         </button>
                     </div>
+                    {fieldErrors.password && <p className="mt-1.5 text-xs text-red-600">{fieldErrors.password[0]}</p>}
                 </div>
 
                 <button

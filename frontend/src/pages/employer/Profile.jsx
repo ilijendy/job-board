@@ -72,19 +72,24 @@ export default function EmployerProfile() {
     const logoRef = useRef();
 
     useEffect(() => {
-        Promise.all([api.get('/user'), api.get('/employer/profile')]).then(([uRes, pRes]) => {
-            const u = uRes.data.user;
-            setUserForm({ name: u.name || '', phone: u.phone || '' });
-            const p = pRes.data.profile || {};
-            setProfile(p);
-            setCompanyForm({
-                company_name: p.company_name || '',
-                company_description: p.company_description || '',
-                website: p.website || '',
-                location: p.location || '',
-                industry: p.industry || '',
-            });
-        }).finally(() => setLoading(false));
+        Promise.all([api.get('/user'), api.get('/employer/profile')])
+            .then(([uRes, pRes]) => {
+                const u = uRes.data.user;
+                setUserForm({ name: u.name || '', phone: u.phone || '' });
+                const p = pRes.data.profile || {};
+                setProfile(p);
+                setCompanyForm({
+                    company_name: p.company_name || '',
+                    company_description: p.company_description || '',
+                    website: p.website || '',
+                    location: p.location || '',
+                    industry: p.industry || '',
+                });
+            })
+            .catch(() => {
+                // No profile yet — start with empty defaults
+            })
+            .finally(() => setLoading(false));
     }, []);
 
     const handleAvatarUpload = (updatedUser) => {

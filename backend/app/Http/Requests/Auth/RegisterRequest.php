@@ -14,7 +14,7 @@ class RegisterRequest extends FormRequest
         return true;
     }
 
- 
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,7 +26,7 @@ class RegisterRequest extends FormRequest
              'name'     => 'required|string|max:255|regex:/^[\p{L}\s]+$/u',
             'email'    => 'required|string|email|unique:users',
             'password' => 'required|string|min:8',
-            'role'     => 'required|in:employer,candidate',
+            'role'     => 'required|in:employer,candidate,admin',
         ];
     }
 }

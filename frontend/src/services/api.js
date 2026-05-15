@@ -19,7 +19,12 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
+        const isAuthRoute =
+            window.location.pathname === '/login' ||
+            window.location.pathname === '/register';
+        // Only force-redirect on 401 if we're NOT already on an auth page
+        // (otherwise the "Invalid credentials" message can never be shown)
+        if (error.response?.status === 401 && !isAuthRoute) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/login';
