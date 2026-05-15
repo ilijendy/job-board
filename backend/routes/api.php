@@ -53,6 +53,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // admin
     Route::middleware('role:admin')->prefix('admin')->group(function () {
+        Route::get('users', [AdminController::class, 'users']);
+        Route::delete('user/{user}', [AdminController::class, 'deleteUser']);
+        Route::put('user/{id}/restore', [AdminController::class, 'restoreUser']);
+        Route::get('jobs', [AdminController::class, 'jobs']);
+        Route::delete('job/{job}', [AdminController::class, 'deleteJob']);
+        Route::put('job/{id}/restore', [AdminController::class, 'restoreJob']);
         Route::get('pending-jobs', [AdminController::class, 'pendingJobs']);
         Route::put('job/{job}/approve', [AdminController::class, 'approveJob']);
         Route::put('job/{job}/reject', [AdminController::class, 'rejectJob']);

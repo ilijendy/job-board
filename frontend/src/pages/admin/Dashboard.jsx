@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import SiteHeader from '../../components/layout/SiteHeader';
 import SiteFooter from '../../components/layout/SiteFooter';
+import UsersTable from '../../components/admin/UsersTable';
+import JobsTable from '../../components/admin/JobsTable';
 import api from '../../services/api';
 
 const STATUS_BADGE = {
@@ -29,6 +31,7 @@ export default function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [acting, setActing] = useState(null);
     const [error, setError] = useState(null);
+    const [activeTab, setActiveTab] = useState('overview');
 
     const fetchData = async () => {
         setLoading(true);
@@ -63,15 +66,24 @@ export default function AdminDashboard() {
         <div className="min-h-screen flex flex-col bg-slate-50">
             <SiteHeader />
             <main className="flex-1 mx-auto w-full max-w-6xl px-4 sm:px-6 py-10">
-                <div className="mb-8">
-                    <p className="text-sm font-semibold uppercase tracking-widest text-brand-700">Admin Panel</p>
-                    <h1 className="mt-1 text-2xl sm:text-3xl font-bold text-slate-900">Moderation & Insights</h1>
+                <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-4">
+                    <div>
+                        <p className="text-sm font-semibold uppercase tracking-widest text-brand-700">Admin Panel</p>
+                        <h1 className="mt-1 text-2xl sm:text-3xl font-bold text-slate-900">Moderation & Insights</h1>
+                    </div>
+                    <div className="flex bg-slate-100 p-1 rounded-xl">
+                        <button onClick={() => setActiveTab('overview')} className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'overview' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>Overview</button>
+                        <button onClick={() => setActiveTab('users')} className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'users' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>Users</button>
+                        <button onClick={() => setActiveTab('jobs')} className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'jobs' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>Jobs</button>
+                    </div>
                 </div>
 
                 {error && <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>}
 
-                {/* Stats */}
-                {stats && (
+                {activeTab === 'overview' && (
+                    <>
+                        {/* Stats */}
+                        {stats && (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
                         <StatCard icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
                             label="Total Users" value={stats.total_users} color="text-brand-600" bg="bg-brand-50" />
@@ -141,6 +153,11 @@ export default function AdminDashboard() {
                         </div>
                     )}
                 </div>
+                </>)}
+
+                {activeTab === 'users' && <UsersTable />}
+                
+                {activeTab === 'jobs' && <JobsTable />}
             </main>
             <SiteFooter />
         </div>

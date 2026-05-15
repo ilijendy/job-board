@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Job extends Model
 {
@@ -57,5 +58,5 @@ class Job extends Model
     public function isApproved():bool{
         return $this->status==='approved';
     }
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 }
