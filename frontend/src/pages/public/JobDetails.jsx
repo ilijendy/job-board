@@ -149,7 +149,9 @@ export default function JobDetails() {
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">{job.title}</h1>
-                                    <p className="mt-2 text-lg font-medium text-slate-600">{company}</p>
+                                    <Link to={`/users/${job.employer_id}`} className="mt-2 inline-block text-lg font-medium text-slate-600 hover:text-brand-600 transition-colors">
+                                        {company}
+                                    </Link>
                                     <div className="mt-4 flex flex-wrap gap-2">
                                         {job.location && <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">{job.location}</span>}
                                         {job.type && <span className="inline-flex rounded-lg bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-800">{job.type}</span>}

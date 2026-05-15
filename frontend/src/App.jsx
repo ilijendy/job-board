@@ -8,6 +8,7 @@ import Register from './pages/auth/Register';
 // public pages
 import Jobs from './pages/public/Jobs';
 import JobDetails from './pages/public/JobDetails';
+import UserProfile from './pages/public/UserProfile';
 
 // employer pages
 import EmployerDashboard from './pages/employer/Dashboard';
@@ -40,6 +41,7 @@ export default function App() {
                 {/* public */}
                 <Route path="/" element={<Jobs />} />
                 <Route path="/jobs/:id" element={<JobDetails />} />
+                <Route path="/users/:id" element={<UserProfile />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 

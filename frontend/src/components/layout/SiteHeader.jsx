@@ -15,8 +15,10 @@ function AvatarImg({ user }) {
         );
     }
     return (
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-white text-xs font-bold">
-            {initials}
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-300 overflow-hidden relative ring-2 ring-slate-100">
+            <svg className="w-7 h-7 absolute -bottom-1" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
         </span>
     );
 }

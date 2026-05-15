@@ -79,7 +79,9 @@ export default function JobApplications() {
                                     {/* Info */}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <p className="font-semibold text-slate-900">{app.candidate?.name || 'Candidate'}</p>
+                                            <Link to={`/users/${app.candidate?.id}`} className="font-semibold text-slate-900 hover:text-brand-600 transition-colors">
+                                                {app.candidate?.name || 'Candidate'}
+                                            </Link>
                                             <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${STATUS_COLORS[app.status] || 'bg-slate-100 text-slate-600'}`}>
                                                 {app.status}
                                             </span>

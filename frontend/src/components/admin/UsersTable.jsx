@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -129,7 +130,11 @@ export default function UsersTable() {
                         ) : (
                             users.map(user => (
                                 <tr key={user.id} className="hover:bg-slate-50 transition-colors">
-                                    <td className="px-6 py-4 font-medium text-slate-900">{user.name}</td>
+                                    <td className="px-6 py-4 font-medium text-slate-900">
+                                        <Link to={`/users/${user.id}`} className="hover:text-brand-600 transition-colors">
+                                            {user.name}
+                                        </Link>
+                                    </td>
                                     <td className="px-6 py-4">{user.email}</td>
                                     <td className="px-6 py-4">
                                         <div className="flex gap-2 items-center">

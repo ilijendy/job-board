@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('jobs', [JobController::class, 'index']);
 Route::get('jobs/{job}', [JobController::class, 'show']);
 Route::get('categories', [CategoryController::class, 'index']);
+Route::get('users/{id}', [UserController::class, 'publicProfile']);
 
 // auth
 Route::prefix('auth')->group(function () {

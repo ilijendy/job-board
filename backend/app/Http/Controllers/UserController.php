@@ -78,4 +78,26 @@ class UserController extends Controller
             'user'       => $user->fresh(),
         ]);
     }
+
+    /**
+     * Get a user's public profile by ID
+     */
+    public function publicProfile($id)
+    {
+        $user = \App\Models\User::with(['candidateProfile', 'employerProfile'])->findOrFail($id);
+
+        if ($user->role === 'employer') {
+            $user->load(['jobs' => function ($query) {
+                $query->where('status', 'approved')
+                      ->where(function($q) {
+                          $q->whereNull('application_deadline')
+                            ->orWhere('application_deadline', '>=', now());
+                      })->latest();
+            }]);
+        }
+
+        return response()->json([
+            'user' => $user,
+        ]);
+    }
 }
